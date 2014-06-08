@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Kapok Gear Simulator</title>
+		<style>
+			body { font-family: "Palatino", serif; }
+			h1 { text-align: center; }
+			table { margin: 0 auto; }
+			.tier-1 { color: black; }
+			.tier-2 { color: teal; }
+			.tier-3 { color: green; }
+			.tier-4 { color: gold; }
+			.tier-5 { color: red; }
+			.tier-6 { color: purple; }
+			td { padding: 10px; background-color: #FAFAFA; }
+		</style>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+		<script>
+			function calculate() {
+				var tiers = ["Crude", "Simple", "Fine", "Exquisite", "Epic", "Legendary"];
+				var tier = parseInt($("#tier").val());
+				var level = parseInt($("#level").val());
+
+				if (tier > 1 && level < 10) {
+					$("#tier").val(1);
+					update();
+					return;
+				}
+				else if (tier > 2 && level < 20) {
+					$("#tier").val(2);
+					update();
+					return;
+				}
+				else if (tier > 3 && level < 30) {
+					$("#tier").val(3);
+					update();
+					return;
+				}
+				else if (tier > 4 && level < 40) {
+					$("#tier").val(4);
+					update();
+					return;
+				}
+				else if (tier > 5 && level < 50) {
+					$("#tier").val(5);
+					update();
+					return;
+				}
+
+				var tier_multiplier = 0.5 + 0.5 * Math.sin(Math.PI * tier / 12);
+				var level_multiplier = Math.log(level + 1) / Math.log(51);
+				var multiplier = tier_multiplier * level_multiplier;
+				var variance = (1 - tier_multiplier) / 2 + 0.05;
+
+				$("#tierval").html(tiers[tier-1]);
+				$("#tierval").attr("class", "tier-" + tier);
+				$("#levelval").html(level);
+				$("#multiplier").html(multiplier.toFixed(3));
+				$("#weapon_damage").html(
+					Math.round(1000 * multiplier * (1 - variance)) +
+					" - " +
+					Math.round(1000 * multiplier * (1 + variance))
+				);
+				$("#weapon_crit").html(
+					(multiplier * 0.5 + 1).toFixed(3)
+				);
+				$("#armour_rating").html(
+					Math.round(multiplier * 1000)
+				);
+				$("#incoming_damage").html(
+					(1000 / (1000 + (multiplier * 1000))).toFixed(3)
+				);
+			}
+
+			$(calculate);
+		</script>
+	</head>
+	<body>
+		<h1>Kapok Gear Simulator</h1>
+
+		<table>
+			<tr>
+				<td>Quality</td>
+				<td>
+					<input id="tier" type="range" min="1" max="6" value="6" onchange="calculate()">
+					<div id="tierval"></div>
+				</td>
+			</tr>
+			<tr>
+				<td>Level</td>
+				<td>
+					<input id="level" type="range" min="1" max="50" value="50" onchange="calculate()">
+					<div id="levelval"></div>
+				</td>
+			</tr>
+			<tr>
+				<td>Multiplier</td>
+				<td id="multiplier"></td>
+			</tr>
+			<tr>
+				<td>Weapon damage</td>
+				<td id="weapon_damage"></td>
+			</tr>
+			<tr>
+				<td>Weapon crit multiplier</td>
+				<td id="weapon_crit"></td>
+			</tr>
+			<tr>
+				<td>Armour rating</td>
+				<td id="armour_rating"></td>
+			</tr>
+			<tr>
+				<td>Incoming damage multiplier</td>
+				<td id="incoming_damage"></td>
+			</tr>
+		</table>
+	</body>
+</html>
